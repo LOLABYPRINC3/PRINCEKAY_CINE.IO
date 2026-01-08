@@ -247,13 +247,12 @@
         #modal-content { 
             background: #0a0a0a; 
             width: 90%; 
-            max-width: 800px; /* Slimmer, professional width */
+            max-width: 800px; 
             border: 1px solid rgba(255,255,255,0.1); 
             position: relative; 
             border-radius: 8px; 
             overflow: hidden;
             box-shadow: 0 40px 100px rgba(0,0,0,1);
-            /* THE AMAZING ANIMATION */
             animation: cinematicPop 0.7s cubic-bezier(0.19, 1, 0.22, 1);
             transform-origin: center;
         }
@@ -289,6 +288,14 @@
         .footer-links a:hover { color: var(--red); padding-left: 5px; }
 
         .spacer-100 { height: 100px; }
+
+        /* FIX: Mobile scaling for modal */
+        @media screen and (max-width: 768px) {
+            .modal-info-padding { padding: 20px; max-height: 50vh; overflow-y: auto; }
+            .modal-info-padding h1 { font-size: 2rem; }
+            .modal-info-padding p { font-size: 0.9rem; }
+            #modal-content { width: 95%; top: 5%; transform: translateY(0); }
+        }
     </style>
 </head>
 <body id="home">
@@ -525,8 +532,9 @@
         /* --- 3. RENDERING ENGINE --- */
         function init() {
             const movieMount = document.getElementById('movies-mount');
+            // FIX: Using encodeURIComponent to handle titles with apostrophes like Eli's Dream
             movieMount.innerHTML = [...MOVIES, ...MOVIES].map(m => `
-                <div class="card" onclick="openModal('${m.title}')">
+                <div class="card" onclick="openModal('${encodeURIComponent(m.title)}')">
                     <img src="${m.thumb}" alt="${m.title}">
                     <div class="card-title">${m.title}</div>
                 </div>
@@ -543,7 +551,8 @@
 
         /* --- 4. MODAL LOGIC --- */
         let slideInterval;
-        function openModal(title) {
+        function openModal(encodedTitle) {
+            const title = decodeURIComponent(encodedTitle);
             const movie = MOVIES.find(m => m.title === title);
             const content = document.getElementById('modal-dynamic-content');
             
@@ -605,10 +614,4 @@
         init();
     </script>
 </body>
-
 </html>
-
-
-
-
-

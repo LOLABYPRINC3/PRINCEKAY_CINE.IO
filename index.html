@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+    <title>PrinceKayStudios | True Zambian Experience</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========================================
+           1. CORE VARIABLES & RESET
+           ========================================
+        */
+        :root {
+            --red: #E50914;
+            --gold: #c5a059;
+            --black: #050505;
+            --dark-grey: #121212;
+            --light-grey: #888;
+            --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-slow: 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body { 
+            background-color: var(--black); 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden; 
+            line-height: 1.6;
+            width: 100vw;
+        }
+
+        /* ========================================
+           2. MOBILE OVERLAYS & UTILITIES
+           ========================================
+        */
+        #rotate-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: var(--black);
+            z-index: 20000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+        }
+        .rotate-icon {
+            width: 80px; height: 80px;
+            border: 2px solid white; border-radius: 10px;
+            margin-bottom: 20px;
+            animation: rotatePhone 2s infinite alternate;
+        }
+        @keyframes rotatePhone { 0% { transform: rotate(0deg); } 100% { transform: rotate(90deg); } }
+
+        @media screen and (max-width: 900px) and (orientation: portrait) {
+            #rotate-overlay { display: flex; }
+        }
+
+        /* ========================================
+           3. PRELOADER & AUTH
+           ========================================
+        */
+        #preloader {
+            position: fixed; inset: 0; background: var(--black); z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 1.2s var(--transition-slow);
+        }
+        .loader-question { font-size: 2.5rem; font-weight: 200; margin-bottom: 50px; letter-spacing: -1px; text-align: center; }
+        .choice-container { display: flex; gap: 30px; }
+        .choice-btn {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white;
+            padding: 15px 40px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 4px;
+            cursor: pointer; position: relative; overflow: hidden; z-index: 1;
+        }
+        .choice-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
+            background: var(--red); transition: width 0.8s var(--ease-out); z-index: -1;
+        }
+        .choice-btn.loading::before { width: 100%; }
+        body.entering #preloader { transform: translateY(-100%); }
+
+        /* ========================================
+           4. NAVIGATION
+           ========================================
+        */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 30px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: 0.5s;
+        }
+        nav.scrolled { background: rgba(0,0,0,0.9); padding: 15px 5%; backdrop-filter: blur(10px); }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: #ccc; text-decoration: none; font-size: 0.8rem; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links a:hover { color: white; }
+        .contact-btn { border: 1px solid white; padding: 10px 25px; border-radius: 2px; color: white !important; }
+
+        /* ========================================
+           5. HERO SECTION
+           ========================================
+        */
+        .hero {
+            height: 100vh; width: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            position: relative; overflow: hidden; padding: 0;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+            background: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1920&q=80') center bottom/cover no-repeat;
+            z-index: -1; transform: scale(1.05);
+            animation: heroZoom 70s infinite alternate;
+        }
+        .hero-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.4) 0%, transparent 30%, transparent 60%, var(--black) 98%);
+        }
+        @keyframes heroZoom { to { transform: scale(1.15); } }
+        .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; letter-spacing: -2px; margin-bottom: 20px; }
+        .hero .motto { font-size: 1.1rem; letter-spacing: 10px; text-transform: uppercase; font-weight: 300; color: #ddd; }
+        .watch-trailer {
+            margin-top: 50px; border: 1px solid rgba(255,255,255,0.5);
+            background: transparent; color: white; padding: 15px 45px;
+            cursor: pointer; transition: 0.4s; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .watch-trailer:hover { background: white; color: black; }
+
+        /* ========================================
+           6. STATS & MISSION
+           ========================================
+        */
+        .stats-bar {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            background: var(--dark-grey); padding: 60px 5%; text-align: center;
+            border-top: 1px solid #222; border-bottom: 1px solid #222;
+        }
+        .stat-item h2 { font-family: 'Bebas Neue'; font-size: 4rem; color: var(--red); }
+        .stat-item p { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--light-grey); }
+
+        section { padding: 120px 5%; position: relative; }
+        .section-tag { color: var(--red); font-size: 0.7rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px; display: block; }
+
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+        .about-text h3 { font-family: 'Bebas Neue'; font-size: 4rem; line-height: 1; margin-bottom: 30px; }
+        .about-text p { font-size: 1.1rem; color: #aaa; margin-bottom: 20px; }
+
+        /* ========================================
+           7. SERVICES
+           ========================================
+        */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 50px; }
+        .service-card { background: #0d0d0d; padding: 50px; border-radius: 8px; transition: 0.4s; border: 1px solid #1a1a1a; }
+        .service-card:hover { border-color: var(--red); transform: translateY(-10px); background: #111; }
+        .service-card h4 { font-family: 'Bebas Neue'; font-size: 2.2rem; margin-bottom: 15px; letter-spacing: 1px; }
+        .service-card p { font-size: 0.95rem; color: #888; }
+
+        /* ========================================
+           8. MOVIE SLIDER (PRODUCTION)
+           ========================================
+        */
+        .row { padding: 100px 0; overflow: hidden; }
+        .row-header { padding: 0 5% 40px; font-size: 1.2rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--red); }
+        .slider-wrapper { display: flex; width: max-content; animation: scroll 60s linear infinite; padding-left: 5%; }
+        .slider-wrapper:hover { animation-play-state: paused; }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        
+        .card { 
+            width: 550px; aspect-ratio: 16/9; margin-right: 30px; background: #111; 
+            cursor: pointer; transition: 0.6s var(--spring); position: relative; overflow: hidden; border-radius: 4px; 
+        }
+        .card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.8s; }
+        .card:hover img { opacity: 1; transform: scale(1.1); }
+        .card-title { position: absolute; bottom: 30px; left: 30px; font-family: 'Bebas Neue'; font-size: 2.5rem; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+
+        /* ========================================
+           9. CREW SECTION
+           ========================================
+        */
+        .crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .crew-card { padding: 60px; background: #0d0d0d; border-left: 2px solid #1a1a1a; transition: 0.5s; }
+        .crew-card:hover { border-left-color: var(--red); background: #151515; }
+        .crew-role { color: var(--red); font-size: 0.75rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; }
+        .crew-name { font-family: 'Bebas Neue'; font-size: 3rem; margin-top: 15px; }
+
+        /* ========================================
+           10. THE LUTS STORE
+           ========================================
+        */
+        .luts-teaser {
+            background: linear-gradient(to right, #000, #111);
+            padding: 150px 5%;
+            text-align: center;
+            border-top: 1px solid #333;
+            cursor: pointer;
+            transition: 0.5s;
+        }
+        .luts-teaser:hover { background: #080808; }
+        .luts-teaser h2 { font-family: 'Bebas Neue'; font-size: 6rem; letter-spacing: -2px; line-height: 0.9; }
+        .luts-teaser p { font-size: 1.2rem; color: var(--gold); letter-spacing: 8px; text-transform: uppercase; margin-top: 20px; }
+
+        #luts-vault {
+            position: fixed; inset: 0;
+            background: var(--black);
+            z-index: 9000;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        #luts-vault.active { display: flex; transform: translateY(0); }
+        
+        .vault-nav { padding: 40px 5%; display: flex; justify-content: space-between; align-items: center; }
+        .close-vault { font-size: 1rem; letter-spacing: 4px; cursor: pointer; border: 1px solid #444; padding: 10px 20px; }
+        
+        .vault-content { padding: 0 5% 100px; }
+        .lut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 80px; }
+        .lut-item { position: relative; aspect-ratio: 16/9; background: #111; overflow: hidden; border: 1px solid #222; }
+        .lut-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 1s; }
+        .lut-item:hover img { filter: grayscale(0%); transform: scale(1.05); }
+        .lut-info { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; opacity: 0; transition: 0.5s; }
+        .lut-item:hover .lut-info { opacity: 1; }
+        .lut-info h3 { font-family: 'Bebas Neue'; font-size: 3rem; color: var(--gold); }
+        .buy-lut { background: var(--gold); color: black; border: none; padding: 15px 30px; font-weight: 900; margin-top: 15px; width: max-content; cursor: pointer; }
+
+        /* ========================================
+           11. UPDATED PROFESSIONAL INFO BOX (MODAL)
+           ========================================
+        */
+        .modal-overlay { 
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.8); 
+            z-index: 15000; 
+            display: none; 
+            backdrop-filter: blur(15px); 
+            align-items: center; 
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #modal-content { 
+            background: #0a0a0a; 
+            width: 90%; 
+            max-width: 800px; /* Slimmer, professional width */
+            border: 1px solid rgba(255,255,255,0.1); 
+            position: relative; 
+            border-radius: 8px; 
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,1);
+            /* THE AMAZING ANIMATION */
+            animation: cinematicPop 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            transform-origin: center;
+        }
+
+        @keyframes cinematicPop {
+            0% { opacity: 0; transform: scale(0.9) translateY(40px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+        
+        .close-modal { 
+            position: absolute; top: 15px; right: 15px; font-size: 1.5rem; 
+            cursor: pointer; color: white; z-index: 100;
+            background: rgba(0,0,0,0.5); width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: 0.3s;
+        }
+        .close-modal:hover { background: var(--red); transform: rotate(90deg); }
+
+        .slideshow { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; }
+        .slide { position: absolute; inset: 0; opacity: 0; transition: 1.2s ease; background-size: cover; background-position: center; }
+        .slide.active { opacity: 1; }
+
+        .modal-info-padding { padding: 40px; }
+        .modal-info-padding h1 { font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--red); margin-bottom: 5px; line-height: 1; }
+        .modal-info-padding .meta { font-size: 0.75rem; letter-spacing: 4px; color: #888; text-transform: uppercase; margin-bottom: 20px; }
+        .modal-info-padding p { font-size: 1rem; line-height: 1.7; color: #ccc; font-weight: 300; }
+
+        footer { background: #080808; padding: 100px 5% 50px; border-top: 1px solid #1a1a1a; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 80px; margin-bottom: 80px; }
+        .footer-logo { font-weight: 900; font-size: 1.8rem; color: var(--red); margin-bottom: 30px; }
+        .footer-links h5 { text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; font-size: 0.9rem; color: #fff; }
+        .footer-links a { display: block; color: #666; text-decoration: none; margin-bottom: 15px; font-size: 1rem; transition: 0.3s; }
+        .footer-links a:hover { color: var(--red); padding-left: 5px; }
+
+        .spacer-100 { height: 100px; }
+    </style>
+</head>
+<body id="home">
+
+    <div id="rotate-overlay">
+        <div class="rotate-icon"></div>
+        <h2>Rotate This sh*t</h2>
+        <p>The experience is crazy in widescreen (CINEMATIC) mode.</p>
+    </div>
+
+    <div id="preloader">
+        <h2 class="loader-question">Choose Your Experience</h2>
+        <div class="choice-container">
+            <button class="choice-btn" onclick="authPartner(this)">Partner</button>
+            <button class="choice-btn" onclick="enterSite(this)">Viewer</button>
+        </div>
+    </div>
+
+    <nav id="navbar">
+        <div style="font-weight: 900; font-size: 1.5rem; letter-spacing: 3px;">PRINCEKAYSTUDIOS</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#productions">Work</a>
+            <a href="#luts">LUTs Store</a>
+            <a href="mailto:contact@pkafwifwi@gmail.com" class="contact-btn">Contact Us</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <h1>PRINCEKAYSTUDIOS</h1>
+        <p class="motto">WE DONT DO CONTENT - JUST <b><i>CINEMA</i></b></p>
+        <button class="watch-trailer" onclick="document.getElementById('productions').scrollIntoView()">Explore Our Work</button>
+    </section>
+
+    <div class="stats-bar">
+        <div class="stat-item"><h2>12+</h2><p>Feature Films</p></div>
+        <div class="stat-item"><h2>50+</h2><p>Commercials</p></div>
+        <div class="stat-item"><h2>05</h2><p>International Awards</p></div>
+        <div class="stat-item"><h2>100%</h2><p>Zambian Made</p></div>
+    </div>
+
+    <section id="about">
+        <div class="about-grid">
+            <div class="about-text">
+                <span class="section-tag">Our Legacy</span>
+                <h3>Defining the New African Aesthetic.</h3>
+                <p>Based in Lusaka, PrinceKayStudios is a videography-service production team dedicated to cinematic excellence. We specialize in high-concept visual storytelling that resonates globally while staying rooted in our heritage.</p>
+                <p>From pre-production strategy to world-class color grading, we handle every frame with precision. We believe in the power of the image to transcend language.</p>
+            </div>
+            <div style="background: #111; height: 500px; border-radius: 4px; border: 1px solid #222; overflow: hidden;">
+                <img src="Kenya6.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+        </div>
+    </section>
+
+    <section id="services" style="background: #050505;">
+        <span class="section-tag">Capabilities</span>
+        <h2 style="font-family:'Bebas Neue'; font-size: 5rem; margin-bottom: 20px;">What We Do Best</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <h4>Cinematography</h4>
+                <p>entry level 8k capture using industry-leading optics to ensure your story looks like the big screen. We use Apple and GOOGLE systems for peak performance.</p>
+            </div>
+            <div class="service-card">
+                <h4>Post-Production</h4>
+                <p>Advanced editing, DaVinci Resolve color grading, and visual effects that push boundaries. Our suite is optimized for HDR delivery.</p>
+            </div>
+            <div class="service-card">
+                <h4>Creative Direction</h4>
+                <p>Turning concepts into comprehensive scripts and visual storyboards that win hearts. We build the world before we shoot a single frame.</p>
+            </div>
+            <div class="service-card">
+                <h4>Sound Design</h4>
+                <p>Immersive spatial audio and custom scoring to make the audience feel every heartbeat. Sound is 50% of the cinematic experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="productions" class="row">
+        <div class="row-header">Featured Productions</div>
+        <div id="movies-mount" class="slider-wrapper"></div>
+    </div>
+
+    <section class="crew-section" id="crew">
+        <span class="section-tag">The Architects</span>
+        <h2 style="font-family:'Bebas Neue'; font-size: 5rem; margin-bottom: 50px;">Core Creative Team</h2>
+        <div class="crew-grid" id="crew-mount"></div>
+    </section>
+
+    <div class="spacer-100"></div>
+
+    <section id="luts" class="luts-teaser" onclick="toggleVault(true)">
+        <p>Upgrade Your Colors</p>
+        <h2>THE CINEMATIC VAULT</h2>
+        <p style="font-size: 0.8rem; border: 1px solid var(--gold); display: inline-block; padding: 10px 20px; margin-top: 40px; color: white;">Explore Professional LUTs</p>
+    </section>
+
+    <div id="luts-vault">
+        <div class="vault-nav">
+            <div style="font-family: 'Bebas Neue'; font-size: 2rem; color: var(--gold);">STUDIO STORE</div>
+            <div class="close-vault" onclick="toggleVault(false)">BACK TO STUDIO</div>
+        </div>
+        <div class="vault-content">
+            <h1 style="font-family: 'Bebas Neue'; font-size: 8rem; line-height: 0.8; margin-top: 50px;">PRO-GRADE<br><span style="color: var(--gold);">COLOR PRESETS</span></h1>
+            <p style="max-width: 600px; color: #888; margin-top: 30px; font-size: 1.2rem;">Used in our award-winning productions. These LUTs are designed for S-Log3, Log-C, and Blackmagic RAW to give you the "Prince Kay" look instantly.</p>
+            <div class="lut-grid">
+                <div class="lut-item">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80">
+                    <div class="lut-info">
+                        <h3>KAFUE NOIR</h3>
+                        <p>Gritty, high contrast with deep shadows and teal highlights.</p>
+                        <button class="buy-lut">$49 - GET PACK</button>
+                    </div>
+                </div>
+                <div class="lut-item">
+                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80">
+                    <div class="lut-info">
+                        <h3>NEON GENESIS</h3>
+                        <p>Vibrant cybernetic colors with soft skin-tone preservation.</p>
+                        <button class="buy-lut">$49 - GET PACK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">PRINCEKAYSTUDIOS</div>
+                <p style="color: #666; font-size: 1rem; line-height: 1.8;">The leading cinematic production house in Zambia. Crafting stories that stand the test of time through technical mastery and African soul.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Studio</h5>
+                <a href="#about">About</a>
+                <a href="#productions">Work</a>
+                <a href="#crew">Team</a>
+                <a href="#">Careers</a>
+            </div>
+            <div class="footer-links">
+                <h5>Services</h5>
+                <a href="#services">Film</a>
+                <a href="#services">Music Videos</a>
+                <a href="#services">Commercials</a>
+                <a href="#services">Post</a>
+            </div>
+            <div class="footer-links">
+                <h5>Social</h5>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">Facebook</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 PrinceKayStudios. All Rights Reserved. Based in Lusaka, Zambia.
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="modal">
+        <div id="modal-content">
+            <span class="close-modal" onclick="closeModal()">×</span>
+            <div id="modal-dynamic-content"></div>
+        </div>
+    </div>
+
+    <script>
+        /* --- 1. DATA OBJECTS --- */
+        const MOVIES = [
+            { 
+                title: "TIN-CAN | short-film (2024)", 
+                year: "2024", 
+                dir: "Prince Kay", 
+                desc: "After losing his only friend, a reclusive man retreats into his garage, where grief turns into creation. In the quiet aftermath of loss, he builds a robot—not to replace what he lost, but to survive it. As the line between machine and companionship blurs, the film explores loneliness, memory, and the human need to be understood..", 
+                thumb: "p1.png",
+                slides: ["p1.png", "https://images.unsplash.com/photo-1506318137071-a8e063b4b4bf?auto=format&fit=crop&w=1200&q=80"]
+            },
+            { 
+                title: "BY-LAW | class assignment | (2025)", 
+                year: "2025", 
+                dir: "Tatiana Manjoni | Mwape | Desideria Mvula", 
+                desc: "The film follows the journey of a young female law student navigating the demanding world of legal education. She is intelligent, determined, and deeply committed to her studies, but the sheer volume of work and the complexity of the material often leave her overwhelmed. In one pivotal sequence, she turns to her close circle of friends, asking them to explain some of the assignments and readings she struggles to fully grasp.", 
+                thumb: "film still.jpeg",
+                slides: ["film still.jpeg"]
+            },
+            { 
+                title: "ELI CHAPTER 1 | animated | (2025)", 
+                year: "2025", 
+                dir: "Prince Kafwifwi | sambukila Mingochi", 
+                desc: "the film follows a boy raised in a country-side who's life changes when he invests the coolest little robot friend.", 
+                thumb: "eli 1.png",
+                slides: ["eli 1.png"]
+            },
+            { 
+                title: "Eli's dream | series | (2025)", 
+                year: "2025", 
+                dir: "Prince Kay", 
+                desc: "eli, a young boy explores the world outside his small town. together they uncover mysteries and amazing experiences", 
+                thumb: "ellies flight-Cover.jpg",
+                slides: ["ellies flight-Cover.jpg", "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80"]
+            },
+        ];
+
+        const CREW = [
+            { name: "Mofya Kabemba", role: "writer | director" },
+            { name: "Desideria Mvula", role: "writer | project manager" },
+            { name: "Ackim Karteo", role: "Audio Mastering | In-house music producer" },
+            { name: "Annastasia Mpinda", role: "co-director | Actress" },
+            { name: "Sambukila Mingochi", role: "set design | gaffer" }, 
+            { name: "Prince Kay", role: "Director | founder | cinematographer" }
+        ];
+
+        /* --- 2. AUTH & ENTRY --- */
+        function triggerFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
+        }
+
+        function authPartner(btn) {
+            const pass = prompt("Enter Partner Access Key:");
+            if (pass === "2006") { triggerFullscreen(); enterSite(btn); }
+            else alert("Unauthorized Access.");
+        }
+
+        function enterSite(btn) {
+            triggerFullscreen();
+            btn.classList.add('loading');
+            setTimeout(() => { document.body.classList.add('entering'); }, 1000);
+        }
+
+        /* --- 3. RENDERING ENGINE --- */
+        function init() {
+            const movieMount = document.getElementById('movies-mount');
+            movieMount.innerHTML = [...MOVIES, ...MOVIES].map(m => `
+                <div class="card" onclick="openModal('${m.title}')">
+                    <img src="${m.thumb}" alt="${m.title}">
+                    <div class="card-title">${m.title}</div>
+                </div>
+            `).join('');
+
+            const crewMount = document.getElementById('crew-mount');
+            crewMount.innerHTML = CREW.map(c => `
+                <div class="crew-card">
+                    <div class="crew-role">${c.role}</div>
+                    <div class="crew-name">${c.name}</div>
+                </div>
+            `).join('');
+        }
+
+        /* --- 4. MODAL LOGIC --- */
+        let slideInterval;
+        function openModal(title) {
+            const movie = MOVIES.find(m => m.title === title);
+            const content = document.getElementById('modal-dynamic-content');
+            
+            const slidesHTML = movie.slides.map((s, i) => `
+                <div class="slide ${i === 0 ? 'active' : ''}" style="background-image:url('${s}')"></div>
+            `).join('');
+
+            content.innerHTML = `
+                <div class="slideshow">${slidesHTML}</div>
+                <div class="modal-info-padding">
+                    <h1>${movie.title}</h1>
+                    <div class="meta">${movie.year} | Directed by ${movie.dir}</div>
+                    <p>${movie.desc}</p>
+                </div>
+            `;
+            
+            document.getElementById('modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            startSlideshow();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            clearInterval(slideInterval);
+        }
+
+        function startSlideshow() {
+            let current = 0;
+            const slides = document.querySelectorAll('.slide');
+            if(slides.length <= 1) return;
+            slideInterval = setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 4000);
+        }
+
+        /* --- 5. STORE TOGGLE --- */
+        function toggleVault(show) {
+            const vault = document.getElementById('luts-vault');
+            if(show) {
+                vault.style.display = 'flex';
+                setTimeout(() => vault.classList.add('active'), 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                vault.classList.remove('active');
+                setTimeout(() => vault.style.display = 'none', 1000);
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        window.onscroll = () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 100) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        };
+
+        init();
+    </script>
+</body>
+</html>

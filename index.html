@@ -255,10 +255,10 @@
             box-shadow: 0 40px 100px rgba(0,0,0,1);
             animation: cinematicPop 0.7s cubic-bezier(0.19, 1, 0.22, 1);
             transform-origin: center;
-            /* Added for mobile exit fix */
+            /* Added for Mobile/Scroll Fix */
             display: flex;
             flex-direction: column;
-            max-height: 90vh;
+            max-height: 90vh; /* Prevents it from going off-screen */
         }
 
         @keyframes cinematicPop {
@@ -275,11 +275,18 @@
         }
         .close-modal:hover { background: var(--red); transform: rotate(90deg); }
 
+        #modal-dynamic-content {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Makes the whole content area scrollable */
+            height: 100%;
+        }
+
         .slideshow { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; flex-shrink: 0; }
         .slide { position: absolute; inset: 0; opacity: 0; transition: 1.2s ease; background-size: cover; background-position: center; }
         .slide.active { opacity: 1; }
 
-        .modal-info-padding { padding: 40px; overflow-y: auto; }
+        .modal-info-padding { padding: 40px; }
         .modal-info-padding h1 { font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--red); margin-bottom: 5px; line-height: 1; }
         .modal-info-padding .meta { font-size: 0.75rem; letter-spacing: 4px; color: #888; text-transform: uppercase; margin-bottom: 20px; }
         .modal-info-padding p { font-size: 1rem; line-height: 1.7; color: #ccc; font-weight: 300; }
@@ -293,13 +300,13 @@
 
         .spacer-100 { height: 100px; }
 
-        /* MOBILE EXIT & SCALING FIX */
+        /* MOBILE FIX: Allow scrolling inside info box */
         @media screen and (max-width: 768px) {
             #modal-content { width: 95%; max-height: 85vh; }
             .modal-info-padding { padding: 25px; }
             .modal-info-padding h1 { font-size: 2.2rem; }
-            .modal-info-padding p { font-size: 0.9rem; }
-            .close-modal { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.2rem; }
+            .modal-info-padding p { font-size: 0.95rem; }
+            .close-modal { top: 10px; right: 10px; width: 35px; height: 35px; }
         }
     </style>
 </head>
@@ -497,7 +504,7 @@
                 slides: ["eli 1.png"]
             },
             { 
-                title: "Elis dream | series | (2025)", 
+                title: "Eli's dream | series | (2025)", 
                 year: "2025", 
                 dir: "Prince Kay", 
                 desc: "eli, a young boy explores the world outside his small town. together they uncover mysteries and amazing experiences", 
@@ -619,4 +626,3 @@
     </script>
 </body>
 </html>
-

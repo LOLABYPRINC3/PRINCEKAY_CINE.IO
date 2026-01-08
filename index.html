@@ -255,6 +255,10 @@
             box-shadow: 0 40px 100px rgba(0,0,0,1);
             animation: cinematicPop 0.7s cubic-bezier(0.19, 1, 0.22, 1);
             transform-origin: center;
+            /* Added for mobile exit fix */
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
         }
 
         @keyframes cinematicPop {
@@ -271,11 +275,11 @@
         }
         .close-modal:hover { background: var(--red); transform: rotate(90deg); }
 
-        .slideshow { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; }
+        .slideshow { width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden; flex-shrink: 0; }
         .slide { position: absolute; inset: 0; opacity: 0; transition: 1.2s ease; background-size: cover; background-position: center; }
         .slide.active { opacity: 1; }
 
-        .modal-info-padding { padding: 40px; }
+        .modal-info-padding { padding: 40px; overflow-y: auto; }
         .modal-info-padding h1 { font-family: 'Bebas Neue'; font-size: 3.5rem; color: var(--red); margin-bottom: 5px; line-height: 1; }
         .modal-info-padding .meta { font-size: 0.75rem; letter-spacing: 4px; color: #888; text-transform: uppercase; margin-bottom: 20px; }
         .modal-info-padding p { font-size: 1rem; line-height: 1.7; color: #ccc; font-weight: 300; }
@@ -289,12 +293,13 @@
 
         .spacer-100 { height: 100px; }
 
-        /* FIX: Mobile scaling for modal */
+        /* MOBILE EXIT & SCALING FIX */
         @media screen and (max-width: 768px) {
-            .modal-info-padding { padding: 20px; max-height: 50vh; overflow-y: auto; }
-            .modal-info-padding h1 { font-size: 2rem; }
+            #modal-content { width: 95%; max-height: 85vh; }
+            .modal-info-padding { padding: 25px; }
+            .modal-info-padding h1 { font-size: 2.2rem; }
             .modal-info-padding p { font-size: 0.9rem; }
-            #modal-content { width: 95%; top: 5%; transform: translateY(0); }
+            .close-modal { top: 10px; right: 10px; width: 35px; height: 35px; font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -532,7 +537,6 @@
         /* --- 3. RENDERING ENGINE --- */
         function init() {
             const movieMount = document.getElementById('movies-mount');
-            // FIX: Using encodeURIComponent to handle titles with apostrophes like Eli's Dream
             movieMount.innerHTML = [...MOVIES, ...MOVIES].map(m => `
                 <div class="card" onclick="openModal('${encodeURIComponent(m.title)}')">
                     <img src="${m.thumb}" alt="${m.title}">

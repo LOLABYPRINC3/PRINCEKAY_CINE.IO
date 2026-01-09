@@ -265,12 +265,45 @@
             const container = document.getElementById('slider-container');
             const wrapper = document.getElementById('movies-mount');
             let isDown = false, startX, scrollLeft, timer;
-            const stop = () => { wrapper.classList.remove('auto-animating'); clearTimeout(timer); };
-            const start = () => { timer = setTimeout(() => wrapper.classList.add('auto-animating'), 3000); };
-            container.addEventListener('mousedown', (e) => { isDown = true; stop(); startX = e.pageX - container.offsetLeft; scrollLeft = container.scrollLeft; });
-            container.addEventListener('mouseup', () => { isDown = false; start(); });
-            container.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); const walk = (e.pageX - container.offsetLeft - startX) * 2; container.scrollLeft = scrollLeft - walk; });
-            container.addEventListener('touchstart', stop); container.addEventListener('touchend', start);
+
+            // Immediately stops animation on touch/interaction
+            const stop = () => { 
+                wrapper.classList.remove('auto-animating'); 
+                clearTimeout(timer); 
+            };
+
+            // Restarts animation after 800ms (less than a second) of inactivity
+            const start = () => { 
+                timer = setTimeout(() => wrapper.classList.add('auto-animating'), 800); 
+            };
+
+            container.addEventListener('mousedown', (e) => { 
+                isDown = true; 
+                stop(); 
+                startX = e.pageX - container.offsetLeft; 
+                scrollLeft = container.scrollLeft; 
+            });
+
+            container.addEventListener('mouseup', () => { 
+                isDown = false; 
+                start(); 
+            });
+
+            container.addEventListener('mouseleave', () => { 
+                if(isDown) { isDown = false; start(); } 
+            });
+
+            container.addEventListener('mousemove', (e) => { 
+                if (!isDown) return; 
+                e.preventDefault(); 
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2; 
+                container.scrollLeft = scrollLeft - walk; 
+            });
+
+            // Touch events for mobile scrolling
+            container.addEventListener('touchstart', stop); 
+            container.addEventListener('touchend', start);
         }
 
         function openModal(title) {

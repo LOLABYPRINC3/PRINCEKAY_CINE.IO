@@ -161,7 +161,7 @@
         .service-card p { font-size: 0.95rem; color: #888; }
 
         /* ========================================
-           8. MOVIE SHOWCASE (MANUAL SCROLL UPDATE)
+           8. MOVIE SHOWCASE (HYBRID SCROLL)
            ========================================
         */
         .row { padding: 100px 0; overflow: hidden; }
@@ -172,10 +172,10 @@
             overflow-x: auto;
             overflow-y: hidden;
             padding-left: 5%;
-            /* Hide scrollbar but keep functionality */
             scrollbar-width: none; 
             -ms-overflow-style: none;
             cursor: grab;
+            position: relative;
         }
         .slider-container::-webkit-scrollbar { display: none; }
 
@@ -183,13 +183,17 @@
             display: flex; 
             width: max-content; 
             padding-bottom: 20px;
+            will-change: transform;
         }
         
-        /* Smooth auto-slide when not touching */
         .slider-wrapper.auto-animating {
-            animation: slowScroll 120s linear infinite;
+            animation: scrollLoop 60s linear infinite;
         }
-        @keyframes slowScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        @keyframes scrollLoop {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
 
         .card { 
             width: 550px; aspect-ratio: 16/9; margin-right: 30px; background: #111; 
@@ -240,16 +244,6 @@
         
         .vault-nav { padding: 40px 5%; display: flex; justify-content: space-between; align-items: center; }
         .close-vault { font-size: 1rem; letter-spacing: 4px; cursor: pointer; border: 1px solid #444; padding: 10px 20px; }
-        
-        .vault-content { padding: 0 5% 100px; }
-        .lut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 80px; }
-        .lut-item { position: relative; aspect-ratio: 16/9; background: #111; overflow: hidden; border: 1px solid #222; }
-        .lut-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 1s; }
-        .lut-item:hover img { filter: grayscale(0%); transform: scale(1.05); }
-        .lut-info { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; opacity: 0; transition: 0.5s; }
-        .lut-item:hover .lut-info { opacity: 1; }
-        .lut-info h3 { font-family: 'Bebas Neue'; font-size: 3rem; color: var(--gold); }
-        .buy-lut { background: var(--gold); color: black; border: none; padding: 15px 30px; font-weight: 900; margin-top: 15px; width: max-content; cursor: pointer; }
 
         /* ========================================
            11. MODAL (INFO BOX)
@@ -303,11 +297,7 @@
         }
 
         footer { background: #080808; padding: 100px 5% 50px; border-top: 1px solid #1a1a1a; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 80px; margin-bottom: 80px; }
-        .footer-logo { font-weight: 900; font-size: 1.8rem; color: var(--red); margin-bottom: 30px; }
-        .footer-links h5 { text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; font-size: 0.9rem; color: #fff; }
-        .footer-links a { display: block; color: #666; text-decoration: none; margin-bottom: 15px; font-size: 1rem; transition: 0.3s; }
-        .footer-links a:hover { color: var(--red); padding-left: 5px; }
+        .copyright { text-align: center; color: #444; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
 
         .spacer-100 { height: 100px; }
 
@@ -433,13 +423,14 @@
 
         function init() {
             const movieMount = document.getElementById('movies-mount');
-            // Duplicate array for infinite-feel scroll
-            movieMount.innerHTML = [...MOVIES, ...MOVIES].map(m => `
+            // Infinite loop content
+            const content = [...MOVIES, ...MOVIES, ...MOVIES].map(m => `
                 <div class="card" onclick="openModal('${encodeURIComponent(m.title)}')">
                     <img src="${m.thumb}" alt="${m.title}">
                     <div class="card-title">${m.title}</div>
                 </div>
             `).join('');
+            movieMount.innerHTML = content;
 
             const crewMount = document.getElementById('crew-mount');
             crewMount.innerHTML = CREW.map(c => `
@@ -449,26 +440,67 @@
                 </div>
             `).join('');
 
-            // Slider drag/scroll logic
-            const slider = document.getElementById('slider-container');
-            const wrapper = document.getElementById('movies-mount');
-            
-            slider.addEventListener('scroll', () => {
-                wrapper.classList.remove('auto-animating');
-            });
+            setupHybridScroll();
         }
 
-        let slideInterval;
-        let currentSlideIndex = 0;
+        function setupHybridScroll() {
+            const container = document.getElementById('slider-container');
+            const wrapper = document.getElementById('movies-mount');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let timer;
+
+            // Stop auto-scroll on touch/click
+            const stopAuto = () => {
+                wrapper.classList.remove('auto-animating');
+                clearTimeout(timer);
+            };
+
+            // Restart auto-scroll after 3 seconds of inactivity
+            const startAuto = () => {
+                timer = setTimeout(() => {
+                    wrapper.classList.add('auto-animating');
+                }, 3000);
+            };
+
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+                stopAuto();
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+                startAuto();
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+                startAuto();
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 2;
+                container.scrollLeft = scrollLeft - walk;
+            });
+
+            // Touch support for mobile
+            container.addEventListener('touchstart', stopAuto);
+            container.addEventListener('touchend', startAuto);
+        }
 
         function openModal(encodedTitle) {
             const title = decodeURIComponent(encodedTitle);
             const movie = MOVIES.find(m => m.title === title);
             const content = document.getElementById('modal-dynamic-content');
-            currentSlideIndex = 0;
             
             content.innerHTML = `
-                <div class="slideshow" onclick="changeSlide(1)">
+                <div class="slideshow">
                     <div class="slide active" style="background-image:url('${movie.thumb}')"></div>
                 </div>
                 <div class="modal-info-padding">
@@ -484,14 +516,6 @@
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
             document.body.style.overflow = 'auto';
-        }
-
-        function changeSlide(direction) {
-            const slides = document.querySelectorAll('.slide');
-            if(slides.length <= 1) return;
-            slides[currentSlideIndex].classList.remove('active');
-            currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
-            slides[currentSlideIndex].classList.add('active');
         }
 
         function toggleVault(show) {

@@ -164,7 +164,13 @@
            8. MOVIE SLIDER (PRODUCTION)
            ========================================
         */
-        .row { padding: 100px 0; overflow: hidden; }
+        .row { 
+            padding: 100px 0; 
+            overflow-x: auto; /* ALLOW SCROLLING */
+            scrollbar-width: none; /* Hide default bar for clean look */
+        }
+        .row::-webkit-scrollbar { display: none; } /* Hide for Chrome/Safari */
+
         .row-header { padding: 0 5% 40px; font-size: 1.2rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--red); }
         .slider-wrapper { display: flex; width: max-content; animation: scroll 60s linear infinite; padding-left: 5%; }
         .slider-wrapper:hover { animation-play-state: paused; }
@@ -173,6 +179,7 @@
         .card { 
             width: 550px; aspect-ratio: 16/9; margin-right: 30px; background: #111; 
             cursor: pointer; transition: 0.6s var(--spring); position: relative; overflow: hidden; border-radius: 4px; 
+            flex-shrink: 0; /* PREVENT SQUISHING WHILE SCROLLING */
         }
         .card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.8s; }
         .card:hover img { opacity: 1; transform: scale(1.1); }
@@ -393,237 +400,4 @@
         <div id="movies-mount" class="slider-wrapper"></div>
     </div>
 
-    <section class="crew-section" id="crew">
-        <span class="section-tag">The Architects</span>
-        <h2 style="font-family:'Bebas Neue'; font-size: 5rem; margin-bottom: 50px;">Core Creative Team</h2>
-        <div class="crew-grid" id="crew-mount"></div>
-    </section>
-
-    <div class="spacer-100"></div>
-
-    <section id="luts" class="luts-teaser" onclick="toggleVault(true)">
-        <p>Upgrade Your Colors</p>
-        <h2>THE CINEMATIC VAULT</h2>
-        <p style="font-size: 0.8rem; border: 1px solid var(--gold); display: inline-block; padding: 10px 20px; margin-top: 40px; color: white;">Explore Professional LUTs</p>
-    </section>
-
-    <div id="luts-vault">
-        <div class="vault-nav">
-            <div style="font-family: 'Bebas Neue'; font-size: 2rem; color: var(--gold);">STUDIO STORE</div>
-            <div class="close-vault" onclick="toggleVault(false)">BACK TO STUDIO</div>
-        </div>
-        <div class="vault-content">
-            <h1 style="font-family: 'Bebas Neue'; font-size: 8rem; line-height: 0.8; margin-top: 50px;">PRO-GRADE<br><span style="color: var(--gold);">COLOR PRESETS</span></h1>
-            <p style="max-width: 600px; color: #888; margin-top: 30px; font-size: 1.2rem;">Used in our award-winning productions. These LUTs are designed for S-Log3, Log-C, and Blackmagic RAW to give you the "Prince Kay" look instantly.</p>
-            <div class="lut-grid">
-                <div class="lut-item">
-                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80">
-                    <div class="lut-info">
-                        <h3>KAFUE NOIR</h3>
-                        <p>Gritty, high contrast with deep shadows and teal highlights.</p>
-                        <button class="buy-lut">$49 - GET PACK</button>
-                    </div>
-                </div>
-                <div class="lut-item">
-                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80">
-                    <div class="lut-info">
-                        <h3>NEON GENESIS</h3>
-                        <p>Vibrant cybernetic colors with soft skin-tone preservation.</p>
-                        <button class="buy-lut">$49 - GET PACK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="footer-grid">
-            <div>
-                <div class="footer-logo">PRINCEKAYSTUDIOS</div>
-                <p style="color: #666; font-size: 1rem; line-height: 1.8;">The leading cinematic production house in Zambia. Crafting stories that stand the test of time through technical mastery and African soul.</p>
-            </div>
-            <div class="footer-links">
-                <h5>Studio</h5>
-                <a href="#about">About</a>
-                <a href="#productions">Work</a>
-                <a href="#crew">Team</a>
-                <a href="#">Careers</a>
-            </div>
-            <div class="footer-links">
-                <h5>Services</h5>
-                <a href="#services">Film</a>
-                <a href="#services">Music Videos</a>
-                <a href="#services">Commercials</a>
-                <a href="#services">Post</a>
-            </div>
-            <div class="footer-links">
-                <h5>Social</h5>
-                <a href="#">Instagram</a>
-                <a href="#">YouTube</a>
-                <a href="#">Facebook</a>
-                <a href="#">LinkedIn</a>
-            </div>
-        </div>
-        <div class="copyright">
-            &copy; 2026 PrinceKayStudios. All Rights Reserved. Based in Lusaka, Zambia.
-        </div>
-    </footer>
-
-    <div class="modal-overlay" id="modal">
-        <div id="modal-content">
-            <span class="close-modal" onclick="closeModal()">×</span>
-            <div id="modal-dynamic-content"></div>
-        </div>
-    </div>
-
-    <script>
-        /* --- 1. DATA OBJECTS --- */
-        const MOVIES = [
-            { 
-                title: "TIN-CAN | short-film (2024)", 
-                year: "2024", 
-                dir: "Prince Kay", 
-                desc: "After losing his only friend, a reclusive man retreats into his garage, where grief turns into creation. In the quiet aftermath of loss, he builds a robot—not to replace what he lost, but to survive it. As the line between machine and companionship blurs, the film explores loneliness, memory, and the human need to be understood..", 
-                thumb: "p1.png",
-                slides: ["p1.png", "https://images.unsplash.com/photo-1506318137071-a8e063b4b4bf?auto=format&fit=crop&w=1200&q=80"]
-            },
-            { 
-                title: "BY-LAW | class assignment | (2025)", 
-                year: "2025", 
-                dir: "Tatiana Manjoni | Mwape | Desideria Mvula", 
-                desc: "The film follows the journey of a young female law student navigating the demanding world of legal education. She is intelligent, determined, and deeply committed to her studies, but the sheer volume of work and the complexity of the material often leave her overwhelmed. In one pivotal sequence, she turns to her close circle of friends, asking them to explain some of the assignments and readings she struggles to fully grasp.", 
-                thumb: "film still.jpeg",
-                slides: ["film still.jpeg"]
-            },
-            { 
-                title: "ELI CHAPTER 1 | animated | (2025)", 
-                year: "2025", 
-                dir: "Prince Kafwifwi | sambukila Mingochi", 
-                desc: "the film follows a boy raised in a country-side who's life changes when he invests the coolest little robot friend.", 
-                thumb: "eli 1.png",
-                slides: ["eli 1.png"]
-            },
-            { 
-                title: "Eli's dream | series | (2025)", 
-                year: "2025", 
-                dir: "Prince Kay", 
-                desc: "eli, a young boy explores the world outside his small town. together they uncover mysteries and amazing experiences", 
-                thumb: "ellies flight-Cover.jpg",
-                slides: ["ellies flight-Cover.jpg", "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80"]
-            },
-        ];
-
-        const CREW = [
-            { name: "Mofya Kabemba", role: "writer | director" },
-            { name: "Desideria Mvula", role: "writer | project manager" },
-            { name: "Ackim Karteo", role: "Audio Mastering | In-house music producer" },
-            { name: "Annastasia Mpinda", role: "co-director | Actress" },
-            { name: "Sambukila Mingochi", role: "set design | gaffer" }, 
-            { name: "Prince Kay", role: "Director | founder | cinematographer" }
-        ];
-
-        /* --- 2. AUTH & ENTRY --- */
-        function triggerFullscreen() {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
-        }
-
-        function authPartner(btn) {
-            const pass = prompt("Enter Partner Access Key:");
-            if (pass === "2006") { triggerFullscreen(); enterSite(btn); }
-            else alert("Unauthorized Access.");
-        }
-
-        function enterSite(btn) {
-            triggerFullscreen();
-            btn.classList.add('loading');
-            setTimeout(() => { document.body.classList.add('entering'); }, 1000);
-        }
-
-        /* --- 3. RENDERING ENGINE --- */
-        function init() {
-            const movieMount = document.getElementById('movies-mount');
-            movieMount.innerHTML = [...MOVIES, ...MOVIES].map(m => `
-                <div class="card" onclick="openModal('${encodeURIComponent(m.title)}')">
-                    <img src="${m.thumb}" alt="${m.title}">
-                    <div class="card-title">${m.title}</div>
-                </div>
-            `).join('');
-
-            const crewMount = document.getElementById('crew-mount');
-            crewMount.innerHTML = CREW.map(c => `
-                <div class="crew-card">
-                    <div class="crew-role">${c.role}</div>
-                    <div class="crew-name">${c.name}</div>
-                </div>
-            `).join('');
-        }
-
-        /* --- 4. MODAL LOGIC --- */
-        let slideInterval;
-        function openModal(encodedTitle) {
-            const title = decodeURIComponent(encodedTitle);
-            const movie = MOVIES.find(m => m.title === title);
-            const content = document.getElementById('modal-dynamic-content');
-            
-            const slidesHTML = movie.slides.map((s, i) => `
-                <div class="slide ${i === 0 ? 'active' : ''}" style="background-image:url('${s}')"></div>
-            `).join('');
-
-            content.innerHTML = `
-                <div class="slideshow">${slidesHTML}</div>
-                <div class="modal-info-padding">
-                    <h1>${movie.title}</h1>
-                    <div class="meta">${movie.year} | Directed by ${movie.dir}</div>
-                    <p>${movie.desc}</p>
-                </div>
-            `;
-            
-            document.getElementById('modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            startSlideshow();
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-            clearInterval(slideInterval);
-        }
-
-        function startSlideshow() {
-            let current = 0;
-            const slides = document.querySelectorAll('.slide');
-            if(slides.length <= 1) return;
-            slideInterval = setInterval(() => {
-                slides[current].classList.remove('active');
-                current = (current + 1) % slides.length;
-                slides[current].classList.add('active');
-            }, 4000);
-        }
-
-        /* --- 5. STORE TOGGLE --- */
-        function toggleVault(show) {
-            const vault = document.getElementById('luts-vault');
-            if(show) {
-                vault.style.display = 'flex';
-                setTimeout(() => vault.classList.add('active'), 10);
-                document.body.style.overflow = 'hidden';
-            } else {
-                vault.classList.remove('active');
-                setTimeout(() => vault.style.display = 'none', 1000);
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        window.onscroll = () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 100) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
-        };
-
-        init();
-    </script>
-</body>
-</html>
-
+    <

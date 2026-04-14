@@ -23,7 +23,7 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--black); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.6; width: 100vw; }
 
-        /* ROTATE OVERLAY - RESTORED */
+        /* ROTATE OVERLAY */
         #rotate-overlay {
             display: none;
             position: fixed; inset: 0;
@@ -113,20 +113,18 @@
         .stat-item h2 { font-family: 'Bebas Neue'; font-size: 4rem; color: var(--red); }
         .stat-item p { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--light-grey); }
 
-        /* SHOWCASE - HYBRID FIX */
+        /* SHOWCASE - UPDATED FOR FLUID SCROLLING */
         .row { padding: 100px 0; overflow: hidden; }
         .row-header { padding: 0 5% 40px; font-size: 1.2rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: var(--red); }
-        .slider-container { width: 100%; overflow-x: auto; padding-left: 5%; scrollbar-width: none; cursor: grab; }
-        .slider-container::-webkit-scrollbar { display: none; }
-        .slider-wrapper { display: flex; width: max-content; padding-bottom: 20px; }
-        .slider-wrapper.auto-animating { animation: scrollLoop 60s linear infinite; }
-        @keyframes scrollLoop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        .card { width: 550px; aspect-ratio: 16/9; margin-right: 30px; background: #111; cursor: pointer; transition: 0.6s var(--spring); position: relative; overflow: hidden; border-radius: 4px; flex-shrink: 0; }
+        .slider-container { width: 100%; overflow-x: hidden; position: relative; cursor: grab; }
+        .slider-wrapper { display: flex; width: max-content; padding-left: 5%; will-change: transform; }
+        
+        .card { width: 450px; aspect-ratio: 16/9; margin-right: 30px; background: #111; cursor: pointer; transition: 0.6s var(--spring); position: relative; overflow: hidden; border-radius: 4px; flex-shrink: 0; }
         .card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.8s; }
         .card:hover img { opacity: 1; transform: scale(1.1); }
         .card-title { position: absolute; bottom: 30px; left: 30px; font-family: 'Bebas Neue'; font-size: 2.5rem; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
 
-        /* LUT VAULT - RESTORED FULL DESIGN */
+        /* LUT VAULT */
         #luts-vault {
             position: fixed; inset: 0; background: var(--black); z-index: 9000;
             display: none; flex-direction: column; overflow-y: auto;
@@ -145,7 +143,6 @@
         .lut-info h3 { font-family: 'Bebas Neue'; font-size: 3rem; color: var(--gold); }
         .buy-lut { background: var(--gold); color: black; border: none; padding: 15px 30px; font-weight: 900; margin-top: 15px; width: max-content; cursor: pointer; }
 
-        /* FOOTER - RESTORED */
         footer { background: #080808; padding: 100px 5% 50px; border-top: 1px solid #1a1a1a; }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 80px; margin-bottom: 80px; }
         .footer-logo { font-weight: 900; font-size: 1.8rem; color: var(--red); margin-bottom: 30px; }
@@ -153,7 +150,6 @@
         .footer-links a { display: block; color: #666; text-decoration: none; margin-bottom: 15px; font-size: 1rem; transition: 0.3s; }
         .footer-links a:hover { color: var(--red); padding-left: 5px; }
 
-        /* REST OF STYLE UNTOUCHED */
         section { padding: 120px 5%; position: relative; }
         .section-tag { color: var(--red); font-size: 0.7rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px; display: block; }
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
@@ -198,14 +194,14 @@
     <section id="about">
         <div class="about-grid">
             <div class="about-text"><span class="section-tag">Our Legacy</span><h3>Defining the African Aesthetic.</h3><p>Cinematic excellence based in Lusaka.</p></div>
-            <div style="background: #111; height: 500px; border: 1px solid #222;"><img src="kenya6.png" style="width: 100%; height: 100%; object-fit: cover;"></div>
+            <div style="background: #111; height: 500px; border: 1px solid #222;"><img src="kenya6.png" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy"></div>
         </div>
     </section>
 
     <div id="productions" class="row">
         <div class="row-header">Featured Productions</div>
         <div class="slider-container" id="slider-container">
-            <div id="movies-mount" class="slider-wrapper auto-animating"></div>
+            <div id="movies-mount" class="slider-wrapper"></div>
         </div>
     </div>
 
@@ -214,16 +210,17 @@
         <div class="crew-grid" id="crew-mount"></div>
     </section>
 
-    <section id="luts" class="luts-teaser" onclick="toggleVault(true)">
-        <p>Color Grade Like Us</p><h2>THE CINEMATIC VAULT</h2>
+    <section id="luts" class="luts-teaser" onclick="toggleVault(true)" style="cursor:pointer; text-align:center; padding:100px 5%; background:#0a0a0a;">
+        <p style="letter-spacing:5px; color:var(--light-grey);">COLOR GRADE LIKE US</p>
+        <h2 style="font-family:'Bebas Neue'; font-size:5rem; color:var(--gold);">THE CINEMATIC VAULT</h2>
     </section>
 
     <div id="luts-vault">
         <div class="vault-nav"><div style="font-family:'Bebas Neue'; font-size:2rem; color:var(--gold);">STUDIO STORE</div><div class="close-vault" onclick="toggleVault(false)">CLOSE</div></div>
         <div class="vault-content">
             <div class="lut-grid">
-                <div class="lut-item"><img src="p1.png"><div class="lut-info"><h3>COPPERBELT GLOW</h3><button class="buy-lut">BUY K150</button></div></div>
-                <div class="lut-item"><img src="kenya6.png"><div class="lut-info"><h3>LUSAKA NIGHTS</h3><button class="buy-lut">BUY K150</button></div></div>
+                <div class="lut-item"><img src="p1.png" loading="lazy"><div class="lut-info"><h3>COPPERBELT GLOW</h3><button class="buy-lut">BUY K150</button></div></div>
+                <div class="lut-item"><img src="kenya6.png" loading="lazy"><div class="lut-info"><h3>LUSAKA NIGHTS</h3><button class="buy-lut">BUY K150</button></div></div>
             </div>
         </div>
     </div>
@@ -254,57 +251,78 @@
 
         function init() {
             const mount = document.getElementById('movies-mount');
-            mount.innerHTML = [...MOVIES, ...MOVIES, ...MOVIES].map(m => `
+            // Duplicate the list to create a seamless loop
+            const list = [...MOVIES, ...MOVIES, ...MOVIES, ...MOVIES];
+            mount.innerHTML = list.map(m => `
                 <div class="card" onclick="openModal('${encodeURIComponent(m.title)}')">
-                    <img src="${m.thumb}"><div class="card-title">${m.title}</div>
+                    <img src="${m.thumb}" loading="lazy"><div class="card-title">${m.title}</div>
                 </div>`).join('');
             document.getElementById('crew-mount').innerHTML = CREW.map(c => `<div class="crew-card"><div>${c.role}</div><div class="crew-name">${c.name}</div></div>`).join('');
-            setupHybridScroll();
+            
+            setupFluidScroll();
         }
 
-        function setupHybridScroll() {
+        function setupFluidScroll() {
             const container = document.getElementById('slider-container');
             const wrapper = document.getElementById('movies-mount');
-            let isDown = false, startX, scrollLeft, timer;
+            
+            let currentX = 0;
+            let isDragging = false;
+            let startX = 0;
+            let dragVelocity = 0;
+            let autoSpeed = 0.8; // Change this for faster/slower auto scroll
+            
+            function update() {
+                if (!isDragging) {
+                    currentX -= autoSpeed;
+                }
 
-            // Immediately stops animation on touch/interaction
-            const stop = () => { 
-                wrapper.classList.remove('auto-animating'); 
-                clearTimeout(timer); 
-            };
+                // Reset loop seamlessly
+                const halfWidth = wrapper.offsetWidth / 2;
+                if (Math.abs(currentX) > halfWidth) {
+                    currentX = 0;
+                }
+                if (currentX > 0) {
+                    currentX = -halfWidth;
+                }
 
-            // Restarts animation after 800ms (less than a second) of inactivity
-            const start = () => { 
-                timer = setTimeout(() => wrapper.classList.add('auto-animating'), 800); 
-            };
+                wrapper.style.transform = `translateX(${currentX}px)`;
+                requestAnimationFrame(update);
+            }
 
-            container.addEventListener('mousedown', (e) => { 
-                isDown = true; 
-                stop(); 
-                startX = e.pageX - container.offsetLeft; 
-                scrollLeft = container.scrollLeft; 
+            // Mouse Events
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX - currentX;
+                container.style.cursor = 'grabbing';
             });
 
-            container.addEventListener('mouseup', () => { 
-                isDown = false; 
-                start(); 
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                currentX = e.pageX - startX;
             });
 
-            container.addEventListener('mouseleave', () => { 
-                if(isDown) { isDown = false; start(); } 
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
             });
 
-            container.addEventListener('mousemove', (e) => { 
-                if (!isDown) return; 
-                e.preventDefault(); 
-                const x = e.pageX - container.offsetLeft;
-                const walk = (x - startX) * 2; 
-                container.scrollLeft = scrollLeft - walk; 
+            // Touch Events
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].pageX - currentX;
             });
 
-            // Touch events for mobile scrolling
-            container.addEventListener('touchstart', stop); 
-            container.addEventListener('touchend', start);
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].pageX - startX;
+            });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            requestAnimationFrame(update);
         }
 
         function openModal(title) {
